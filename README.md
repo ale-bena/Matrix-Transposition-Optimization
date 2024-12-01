@@ -1,12 +1,5 @@
 # Matrix-Transposition-Optimization
 
-# Features <!-- omit in toc -->
-
-- [GitHub Stats Card]
-    - [Hiding individual stats]
- 
-# README
-
 ## Instructions for Running on Windows
 
 ### Step 1: Install MobaXterm
