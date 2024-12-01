@@ -40,6 +40,21 @@ void initializeMatrix(float** M, int n) {
     }
 }
 
+/***************************************
+*
+* checkSymImp() - checks if a given n x n 
+* matrix is symmetric using an improved 
+* block-based approach
+* input: float** M - pointer to the matrix
+*        int n - the size of the matrix 
+*        (number of rows and columns)
+* output: 1 (true) if the matrix is symmetric,
+*         0 (false) otherwise
+* notes: divides the matrix into 8x8 blocks to 
+*        optimize memory access and performance. 
+*        Compares M[i][j] with M[j][i] within each block.
+*
+***************************************/
 int checkSymImp(float** M, int n){
     for (int i = 0; i < n; i += 8) {
         for (int j = 0; j < n; j += 8) {
@@ -59,7 +74,23 @@ int checkSymImp(float** M, int n){
 }
 
 
-
+/***************************************
+*
+* matTransposeImp() - transposes an n x n 
+* matrix using an improved method with loop 
+* unrolling for optimization
+* input: float** M - pointer to the original matrix
+*        float** T - pointer to the transposed matrix
+*        int n - the size of the matrix 
+*        (number of rows and columns)
+* output: none (matrix T is modified in place)
+* notes: checks if the matrix M is symmetric using 
+*        checkSymImp(). If not symmetric, performs 
+*        the transposition with loop unrolling (by 8) 
+*        to enhance performance. Handles any remainder 
+*        elements after unrolling.
+*
+***************************************/
 void matTransposeImp(float** M, float** T, int n) {
     if(checkSymImp(M,n)==0){
     for (int i = 0; i < n; ++i) {
