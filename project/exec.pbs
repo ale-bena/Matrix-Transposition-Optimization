@@ -1,0 +1,89 @@
+#!/bin/bash
+# Job name
+#PBS -N Project
+# Output files
+#PBS -o ./project.o
+#PBS -e ./project.e
+# Queue name
+#PBS -q short_cpuQ
+# Set the maximum wall time
+#PBS -l walltime=0:55:00
+# Number of nodes, cpus, and amount of memory
+#PBS -l select=1:ncpus=64:mem=900mb
+
+# Modules for C
+module load gcc91
+gcc() {
+    gcc-9.1.0 "$@"
+}
+gcc --version
+
+lscpu
+
+# Select the working directory (change this line)
+cd /home/alessandro.benassi/project
+
+# number of repetitions
+repetitions="25"
+# dimension of the matrix list
+input_num=("16" "32" "64" "128" "256" "512" "1024" "2048" "4096")
+# number of threads list
+n_threads=("1" "2" "4" "8" "16" "32" "64")
+
+# creates a new directory for the results
+dir_path="/home/alessandro.benassi/project"
+dir_name="result_"
+
+n=1
+
+# checking if the directory already exists
+while [ -d "${dir_path}/${dir_name}${n}" ]; do
+  n=$((n+1))
+done
+
+# creating a new directory result_n inside the given path
+new_dir="${dir_path}/${dir_name}${n}"
+mkdir -p "$new_dir"
+
+# SEQUENTIAL
+gcc seqfunc.c seqmain.c -fopenmp
+gcc -O0 -o seq1 seqfunc.c seqmain.c -fopenmp
+for input in "${input_num[@]}"; do
+	  echo "Running the program with $input"
+	  ./seq1 "$input" "$repetitions"
+done
+
+
+# IMPLICIT
+f4="4"
+gcc implfunc.c implmain.c -fopenmp 
+gcc -O2 -funroll-loops -march=native -o impl implfunc.c implmain.c -fopenmp
+for input in "${input_num[@]}"; do
+    echo "Impl $f4 $input"
+    ./impl "$input" "$repetitions" "$f4"
+done
+
+# BLOCKS OMP
+gcc blocksompfunc.c blocksompmain.c -fopenmp 
+gcc -O2 -o blockomp blocksompfunc.c blocksompmain.c -fopenmp
+export OMP_SCHEDULE=STATIC
+ 	for input in "${input_num[@]}"; do
+	  for i in "${n_threads[@]}"; do
+		    echo "Block $block $input $i"
+		    ./blockomp "$input" "$i" "$repetitions" 
+	  done
+  done
+
+
+# file name declarations
+first="times_table.csv"
+second="times_average.csv"
+
+# moving files to the new directory
+mv "$first" "${dir_name}${n}"
+ 
+mv "$second" "${dir_name}${n}"
+
+
+
+
