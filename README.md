@@ -58,5 +58,22 @@
 
 ---
 
-You are now ready to proceed with the next steps in your setup!
+### Step 4: Proceed with GitHub and HPC Setup
+
+When the VPN is activated, proceed with the following steps:
+
+1. Open the GitHub link: [Matrix Transposition Optimization](https://github.com/ale-bena/Matrix-Transposition-Optimization.git).
+2. Click the green **Code** button and select **Download ZIP**.
+3. Unzip the folder.
+
+---
+
+### Step 5: Configure MobaXterm for HPC Access
+
+1. **Open MobaXterm** and start a new local session.
+2. If Windows Defender prompts you to choose network settings, select **Private Networks** for safety.
+
+3. Connect to the HPC cluster:
+   ```bash
+   ssh name.surname@hpc.unitn.it
 
