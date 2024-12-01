@@ -35,7 +35,21 @@ void initializeMatrix(float** M, int n) {
     }
 }
 
-
+/***************************************
+*
+* checkSymOMP() - checks if a given n x n 
+* matrix is symmetric using OpenMP for parallelism
+* input: float** M - pointer to the matrix
+*        int n - the size of the matrix 
+*        (number of rows and columns)
+* output: 1 (true) if the matrix is symmetric,
+*         0 (false) otherwise
+* notes: utilizes OpenMP parallelization with a 
+*        reduction operation to combine results from
+*        multiple threads. Symmetry is determined by 
+*        comparing M[i][j] with M[j][i].
+*
+***************************************/
 int checkSymOMP(float** M, int n) {
     int tmp = 1;
 #pragma omp parallel for reduction(&&:tmp)
@@ -50,7 +64,24 @@ int checkSymOMP(float** M, int n) {
 }
 
 
-
+/***************************************
+*
+* matTransposeOMP() - transposes an n x n 
+* matrix using OpenMP for parallelism and 
+* block-based optimization
+* input: float** M - pointer to the original matrix
+*        float** T - pointer to the transposed matrix
+*        int n - the size of the matrix 
+*        (number of rows and columns)
+*        int blockSize - size of the blocks used for 
+*        block-based transposition
+* output: none (matrix T is modified in place)
+* notes: checks if the matrix M is symmetric using 
+*        checkSymOMP(). If not symmetric, performs 
+*        block-based transposition with parallelization 
+*        to optimize performance on large matrices.
+*
+***************************************/
 void matTransposeOMP(float** M, float** T, int n, int blockSize) {
     if(checkSymOMP(M,n)==0){
 #pragma omp parallel for collapse(2) shared(M, T)
