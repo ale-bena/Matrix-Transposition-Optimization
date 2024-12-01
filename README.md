@@ -73,7 +73,65 @@ When the VPN is activated, proceed with the following steps:
 1. **Open MobaXterm** and start a new local session.
 2. If Windows Defender prompts you to choose network settings, select **Private Networks** for safety.
 
-3. Connect to the HPC cluster:
+3. Connect to the HPC cluster by typing the command:
    ```bash
    ssh name.surname@hpc.unitn.it
+ Replace `name` and `surname` with your personal credentials.
+   - Enter your account password when prompted.
+   - It is recommended not to save the password for security reasons—close the pop-up window instead.
+
+2. **Navigate Your HPC Directory**
+   - Once logged in, check the left panel in **MobaXterm** to see your directory files.
+   - If you don’t see the directory, click the **orange world icon** to display it.
+
+3. **Modify the `.bashrc` File**
+   - Locate the `.bashrc` file in your directory.
+   - Open the file:
+     - Double-click it, or
+     - Right-click and select **Open with default text editor**.
+   - Add the following lines under the section `# User specific aliases and functions`:
+     ```bash
+     module load gcc91
+     alias gcc=gcc-9.1.0
+     ```
+
+4. **Copy Project Files to HPC**
+   - Download the project folder from GitHub.
+   - Drag and drop the folder into the **MobaXterm** file browser. The files will be automatically copied to your HPC environment.
+
+5. **Edit and Run the PBS File**
+   - Navigate to the project directory:
+     ```bash
+     cd project
+     ```
+   - Open the `exec.pbs` file:
+     - Right-click the file and select **Open with default text editor**.
+     - Locate the line:
+       ```bash
+       # Select the working directory (change this line)
+       cd /home/alessandro.benassi/project
+       ```
+     - Replace `alessandro.benassi` with your `name.surname`.
+
+   - Run the PBS file to execute the project:
+     ```bash
+     qsub exec.pbs
+     ```
+
+6. **Project Structure Overview**
+   - The project contains multiple implementations:
+     - **Sequential**: Three files (header, function, and main).
+     - **Implicit**: Three files (header, function, and main).
+     - **OpenMP**: Three files (header, function, and main).
+     - **Block-based OpenMP**: Three files (header, function, and main).
+   - This modular approach ensures reusability and clarity for external users.
+
+7. **Compute Speedup**
+   - Run the **Sequential** implementation as a baseline.
+   - Use the results to compute speedup for the **Implicit** and **OpenMP** implementations.
+   - Without sequential execution data, speedup cannot be calculated.
+
+---
+
+Follow these instructions carefully to complete the setup and run the project on the HPC cluster.
 
