@@ -129,3 +129,5 @@ After some time, a folder named `result_1` should appear, and you should see the
 
 Follow these instructions carefully to complete the setup and run the project on the HPC cluster.
 
+Note: the comments of the functions are presents in the sequential code. The other files have the comments only for the functions that are different.
+
