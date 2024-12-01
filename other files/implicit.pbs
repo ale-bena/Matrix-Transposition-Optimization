@@ -1,0 +1,86 @@
+#!/bin/bash
+#PBS -N sample
+#PBS -o ./Sample.o
+#PBS -e ./Sample.e
+#PBS -q short_cpuQ
+#PBS -l walltime=0:55:00
+#PBS -l select=1:ncpus=64:mem=900mb
+
+module load gcc91
+gcc() {
+  gcc-9.1.0 "$@"
+}
+gcc --version
+
+cd /home/alessandro.benassi/project
+
+lscpu
+
+repetitions="25"
+input_num=("16" "32" "64" "128" "256" "512" "1024" "2048" "4096")
+
+dir_path="/home/alessandro.benassi/project"
+dir_name="resultimpl_"
+
+n=1
+
+while [ -d "${dir_path}/${dir_name}${n}" ]; do
+  n=$((n+1))
+done
+
+new_dir="${dir_path}/${dir_name}${n}"
+mkdir -p "$new_dir"
+
+gcc seqfunc.c seqmain.c -fopenmp
+
+gcc -O0 -o seq1 seqfunc.c seqmain.c -fopenmp
+
+
+for input in "${input_num[@]}"; do
+	  echo "Running the program with $input"
+	  ./seq1 "$input" "$repetitions"
+done
+
+
+f1="1"
+gcc implfunc.c implmain.c -fopenmp 
+gcc -O2 -o impl implfunc.c implmain.c -fopenmp
+for input in "${input_num[@]}"; do
+    echo "Running the program with $input"
+    echo "Impl $f1 $input"
+    ./impl "$input"  "$repetitions" "$f1"
+done
+
+f2="2"
+gcc implfunc.c implmain.c -fopenmp 
+gcc -O2 -march=native -o impl implfunc.c implmain.c -fopenmp
+for input in "${input_num[@]}"; do
+    echo "Impl $f2 $input"
+    ./impl "$input" "$repetitions" "$f2"
+done
+
+
+f3="3"
+gcc implfunc.c implmain.c -fopenmp 
+gcc -O2 -ftree-vectorize -march=native -o impl implfunc.c implmain.c -fopenmp
+for input in "${input_num[@]}"; do
+    echo "Impl $f3 $input"
+    ./impl "$input" "$repetitions" "$f3"
+done
+
+f4="4"
+gcc implfunc.c implmain.c -fopenmp 
+gcc -O2 -funroll-loops -march=native -o impl implfunc.c implmain.c -fopenmp
+for input in "${input_num[@]}"; do
+    echo "Impl $f4 $input"
+    ./impl "$input" "$repetitions" "$f4"
+done
+
+
+first="times_table.csv"
+second="times_average.csv"
+
+mv "$first" "${dir_name}${n}"
+
+mv "$second" "${dir_name}${n}"
+
